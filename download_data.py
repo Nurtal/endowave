@@ -1,0 +1,35 @@
+import requests
+from tqdm import tqdm
+import os
+
+def download_small_allergy():
+    """Trigger the download of GSE152004 dataset
+    """
+
+    # prepare output folder
+    if not os.path.isdir("data"):
+        os.mkdir("data")
+    if not os.path.isdir("data/GSE152004"):
+        os.mkdir("data/GSE152004")
+
+    # download raw counts
+    url = "https://www.ncbi.nlm.nih.gov/geo/download/?type=rnaseq_counts&acc=GSE152004&format=file&file=GSE152004_raw_counts_GRCh38.p13_NCBI.tsv.gz"
+    output = "data/GSE152004/raw_counts.tsv.gz"
+    response = requests.get(url, stream=True)
+    total = int(response.headers.get('content-length', 0))
+    with open(output, "wb") as f, tqdm(
+        desc=output,
+        total=total,
+        unit='iB',
+        unit_scale=True,
+        unit_divisor=1024,
+    ) as bar:
+        for data in response.iter_content(chunk_size=1024):
+            size = f.write(data)
+            bar.update(size)
+
+        
+if __name__ == "__main__":
+
+    download_small_allergy()
+    
