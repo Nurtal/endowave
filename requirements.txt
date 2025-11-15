@@ -2,3 +2,5 @@ pandas
 requests
 tqdm
 scipy
+mygene
+gseapy
