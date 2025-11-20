@@ -4,8 +4,11 @@ import preprocess_data
 import split_into_modules
 import compute_gene_order
 import craft_signal
+import compute_fft
+import compute_psd
 import os
 import glob
+import pandas as pd
 
 def run():
     """Run the entire fucking project on allergy dataset"""
@@ -35,6 +38,19 @@ def run():
 
         config = compute_gene_order.build_random_order(module)
         craft_signal.write_freq(module, config['order'], config['positions'], f"data/signals/{module_name}")
+
+        for signal_file in glob.glob(f"data/signals/{module_name}/*.csv"): 
+
+            # compute FFT
+            freqs, amplitude = compute_fft.compute_fft(signal_file)
+            df_fft = pd.DataFrame({"x":freqs, "y":amplitude})
+            df_fft.to_csv(signal_file.replace(".csv", "_fft.csv"), index=False)
+
+            # compute PSD
+            freqs, psd = compute_psd.compute_welch(signal_file) 
+            df_psd = pd.DataFrame({"x":freqs, "y":psd})
+            df_psd.to_csv(signal_file.replace(".csv", "_psd.csv"), index=False)
+            
 
 if __name__ == "__main__":
 
