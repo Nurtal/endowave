@@ -41,6 +41,37 @@ def compute_welch(filename, nperseg=None, noverlap=None, window='hann'):
     return freqs, psd
 
 
+def compute_total_energy(csv_path, nperseg=None, noverlap=None, window="hann"):
+    """
+    Calcule l'énergie totale du signal via sa PSD (méthode de Welch).
+    Le CSV doit contenir deux colonnes : x (temps) et y (signal).
+    """
+    # Load CSV
+    df = pd.read_csv(csv_path)
+    x = df.iloc[:, 0].values
+    y = df.iloc[:, 1].values
+
+    # Sampling frequency
+    dt = x[1] - x[0]
+    fs = 1.0 / dt
+
+    # PSD (Welch)
+    freqs, psd = welch(
+        y, fs=fs,
+        window=window,
+        nperseg=nperseg,
+        noverlap=noverlap,
+        scaling="density"
+    )
+
+    # Frequency resolution
+    dfreq = freqs[1] - freqs[0]
+
+    # Total energy = ∑ PSD(f) * Δf
+    total_energy = np.sum(psd) * dfreq
+
+    return total_energy
+
 
 
 if __name__ == "__main__":
@@ -48,6 +79,8 @@ if __name__ == "__main__":
     freqs, psd = compute_welch("data/signals/Adipogenesis/GSM4594795_freq.csv")
     print(freqs)
     print(psd)
+    m = compute_total_energy("data/signals/Adipogenesis/GSM4594795_freq.csv")
+    print(m)
     
 
     
