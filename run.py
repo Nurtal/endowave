@@ -10,7 +10,7 @@ import os
 import glob
 import pandas as pd
 
-def run():
+def run_allergy():
     """Run the entire fucking project on allergy dataset"""
 
     # download data
@@ -50,9 +50,55 @@ def run():
             freqs, psd = compute_psd.compute_welch(signal_file) 
             df_psd = pd.DataFrame({"x":freqs, "y":psd})
             df_psd.to_csv(signal_file.replace(".csv", "_psd.csv"), index=False)
-            
+
+
+
+def run_immune():
+    """Run the entire GSE83687 dataset"""
+
+
+    if not os.path.isdir("data/GSE83687"):
+        os.mkdir("data/GSE83687")
+
+    # download data
+    download_data.download_GSE83687()
+
+    # compute vst
+    compute_vst.compute_vst_approximation("data/GSE83687/raw_counts.tsv.gz", "data/GSE83687/vst.csv")
+
+    # preprocess & clean
+    preprocess_data.reformat_vst("data/GSE83687/vst.csv", "data/GSE83687/vst_reformated.csv")
+
+    # split into module
+    if not os.path.isdir("data/GSE83687/modules"):
+        os.mkdir("data/GSE83687/modules")
+    split_into_modules.split_vst_into_hallmark_module("data/GSE83687/vst_reformated.csv", "data/GSE83687/modules/MSigDB_Hallmark")
+
+    # turn into signals
+    if not os.path.isdir("data/GSE83687/signals"):
+        os.mkdir("data/GSE83687/signals")
+    for module in glob.glob("data/GSE83687/modules/MSigDB_Hallmark/*.csv"):
+        module_name = module.split("/")[-1].replace('.csv', '')
+
+        if not os.path.isdir(f"data/GSE83687/signals/{module_name}"):
+            os.mkdir(f"data/GSE83687/signals/{module_name}")
+
+        config = compute_gene_order.build_random_order(module)
+        craft_signal.write_freq(module, config['order'], config['positions'], f"data/GSE83687/signals/{module_name}")
+
+        for signal_file in glob.glob(f"data/GSE83687/signals/{module_name}/*.csv"): 
+
+            # compute FFT
+            freqs, amplitude = compute_fft.compute_fft(signal_file)
+            df_fft = pd.DataFrame({"x":freqs, "y":amplitude})
+            df_fft.to_csv(signal_file.replace(".csv", "_fft.csv"), index=False)
+
+            # compute PSD
+            freqs, psd = compute_psd.compute_welch(signal_file) 
+            df_psd = pd.DataFrame({"x":freqs, "y":psd})
+            df_psd.to_csv(signal_file.replace(".csv", "_psd.csv"), index=False)
 
 if __name__ == "__main__":
 
-    run()
+    run_immune()
     
