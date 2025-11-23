@@ -58,8 +58,34 @@ def download_GSE83687():
             bar.update(size)
 
 
+def download_GSE83687_metadata():
+    """Trigger the download of GSE83687 matrix file containing label
+    """
+
+    # prepare output folder
+    if not os.path.isdir("data"):
+        os.mkdir("data")
+    if not os.path.isdir("data/GSE83687"):
+        os.mkdir("data/GSE83687")
+
+    # download matrix
+    url = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE83nnn/GSE83687/matrix/GSE83687_series_matrix.txt.gz"
+    output = "data/GSE83687/matrix.txt.gz"
+    response = requests.get(url, stream=True)
+    total = int(response.headers.get('content-length', 0))
+    with open(output, "wb") as f, tqdm(
+        desc=output,
+        total=total,
+        unit='iB',
+        unit_scale=True,
+        unit_divisor=1024,
+    ) as bar:
+        for data in response.iter_content(chunk_size=1024):
+            size = f.write(data)
+            bar.update(size)
         
 if __name__ == "__main__":
 
     # download_small_allergy()
-    download_GSE83687()   
+    # download_GSE83687()
+    download_GSE83687_metadata()
