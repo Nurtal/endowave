@@ -5,3 +5,5 @@ scipy
 mygene
 gseapy
 polars
+xgboost
+scikit-learn

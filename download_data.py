@@ -31,19 +31,17 @@ def download_small_allergy():
 
 
 
-def download_GSE83687():
+def download_GSE83687(output_dir):
     """Trigger the download of GSE83687 dataset
     """
 
     # prepare output folder
-    if not os.path.isdir("data"):
-        os.mkdir("data")
-    if not os.path.isdir("data/GSE83687"):
-        os.mkdir("data/GSE83687")
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
 
     # download raw counts
     url = "https://www.ncbi.nlm.nih.gov/geo/download/?type=rnaseq_counts&acc=GSE83687&format=file&file=GSE83687_raw_counts_GRCh38.p13_NCBI.tsv.gz"
-    output = "data/GSE83687/raw_counts.tsv.gz"
+    output = f"{output_dir}/raw_counts.tsv.gz"
     response = requests.get(url, stream=True)
     total = int(response.headers.get('content-length', 0))
     with open(output, "wb") as f, tqdm(
@@ -58,19 +56,17 @@ def download_GSE83687():
             bar.update(size)
 
 
-def download_GSE83687_metadata():
+def download_GSE83687_metadata(output_dir):
     """Trigger the download of GSE83687 matrix file containing label
     """
 
     # prepare output folder
-    if not os.path.isdir("data"):
-        os.mkdir("data")
-    if not os.path.isdir("data/GSE83687"):
-        os.mkdir("data/GSE83687")
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
 
     # download matrix
     url = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE83nnn/GSE83687/matrix/GSE83687_series_matrix.txt.gz"
-    output = "data/GSE83687/matrix.txt.gz"
+    output = f"{output_dir}/matrix.txt.gz"
     response = requests.get(url, stream=True)
     total = int(response.headers.get('content-length', 0))
     with open(output, "wb") as f, tqdm(
@@ -87,5 +83,5 @@ def download_GSE83687_metadata():
 if __name__ == "__main__":
 
     # download_small_allergy()
-    # download_GSE83687()
-    download_GSE83687_metadata()
+    download_GSE83687("data/GSE83687")
+    download_GSE83687_metadata("data/GSE83687")
