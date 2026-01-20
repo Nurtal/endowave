@@ -117,5 +117,5 @@ def run_immune(output_dir):
 
 if __name__ == "__main__":
 
-    run_immune("/tmp/immue_wave")
+    run_immune("data/explore/immue_wave")
     
