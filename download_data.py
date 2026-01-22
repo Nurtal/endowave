@@ -1,6 +1,7 @@
 import requests
 from tqdm import tqdm
 import os
+import pandas as pd
 
 def download_small_allergy():
     """Trigger the download of GSE152004 dataset
@@ -79,9 +80,59 @@ def download_GSE83687_metadata(output_dir):
         for data in response.iter_content(chunk_size=1024):
             size = f.write(data)
             bar.update(size)
+
+
+def download_tcga_data(output_dir):
+    """download TCGA - BRCA data & labels """
+
+    # prepare output folder
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+
+    # dl counts
+    url = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-BRCA.star_counts.tsv.gz"
+    counts = pd.read_csv(
+        url,
+        sep="\t",
+        index_col=0
+    )
+    counts.to_csv(f"{output_dir}/TCGA_BRCA_counts.csv", index=False)
+
+    # dl tpm
+    url = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-BRCA.star_tpm.tsv.gz"
+    tpm = pd.read_csv(
+        url,
+        sep="\t",
+        index_col=0
+    )
+    tpm.to_csv(f"{output_dir}/TCGA_BRCA_tpm.csv", index=False)
+
+    # dl phenotype
+    url = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-BRCA.clinical.tsv.gz"
+    pheno = pd.read_csv(
+        url,
+        sep="\t",
+        index_col=0
+    )
+    pheno.to_csv(f"{output_dir}/TCGA_BRCA_phenotype.csv", index=False)
+
+    # dl pam50
+    url = "https://tcgaatacseq.s3.us-east-1.amazonaws.com/download/brca%2Fpam50"
+    pam = pd.read_csv(
+        url,
+        sep="\t",
+        index_col=0
+    )
+    pam.to_csv(f"{output_dir}/TCGA_BRCA_pam.csv", index=False)
+
+
+
+
         
 if __name__ == "__main__":
 
     # download_small_allergy()
-    download_GSE83687("data/GSE83687")
-    download_GSE83687_metadata("data/GSE83687")
+    # download_GSE83687("data/GSE83687")
+    # download_GSE83687_metadata("data/GSE83687")
+
+    download_tcga_data("data/TCGA")
