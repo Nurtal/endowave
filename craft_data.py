@@ -69,6 +69,11 @@ def craft_log_normalize_data(tpm_data_file:str, output_file:str):
     X.to_csv(output_file, index=False)
 
 
+def craft_tcga_her():
+    """ """
+
+    df = pd.read_csv("data/TCGA/TCGA_BRCA_phenotype.csv")
+    print(df)
 
      
 
@@ -78,4 +83,5 @@ if __name__ == "__main__":
     
     # craft_psd_total_energy_data("data/GSE83687/signals", "data/GSE83687/totalenergy.csv")
     # add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
-    craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "/tmp/lognorm.csv")
+    craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "data/TCGA/TCGA_BRCA_tpm_lognorm.csv")
+    craft_tcga_her()
