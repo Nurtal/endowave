@@ -96,7 +96,7 @@ def download_tcga_data(output_dir):
         sep="\t",
         index_col=0
     )
-    counts.to_csv(f"{output_dir}/TCGA_BRCA_counts.csv", index=False)
+    counts.to_csv(f"{output_dir}/TCGA_BRCA_counts.csv")
 
     # dl tpm
     url = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-BRCA.star_tpm.tsv.gz"
@@ -105,7 +105,7 @@ def download_tcga_data(output_dir):
         sep="\t",
         index_col=0
     )
-    tpm.to_csv(f"{output_dir}/TCGA_BRCA_tpm.csv", index=False)
+    tpm.to_csv(f"{output_dir}/TCGA_BRCA_tpm.csv")
 
     # dl phenotype
     url = "https://gdc-hub.s3.us-east-1.amazonaws.com/download/TCGA-BRCA.clinical.tsv.gz"
@@ -114,7 +114,7 @@ def download_tcga_data(output_dir):
         sep="\t",
         index_col=0
     )
-    pheno.to_csv(f"{output_dir}/TCGA_BRCA_phenotype.csv", index=False)
+    pheno.to_csv(f"{output_dir}/TCGA_BRCA_phenotype.csv")
 
     # dl pam50
     url = "https://tcgaatacseq.s3.us-east-1.amazonaws.com/download/brca%2Fpam50"
@@ -123,7 +123,7 @@ def download_tcga_data(output_dir):
         sep="\t",
         index_col=0
     )
-    pam.to_csv(f"{output_dir}/TCGA_BRCA_pam.csv", index=False)
+    pam.to_csv(f"{output_dir}/TCGA_BRCA_pam.csv")
 
 
 
