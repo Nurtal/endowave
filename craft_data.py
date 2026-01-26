@@ -30,7 +30,7 @@ def craft_psd_total_energy_data(signal_folder:str, output_file:str):
     df.to_csv(output_file, index=False)
 
                 
-def add_label(data_file, manifest, label, output_file):
+def add_label(data_file:str, manifest:str, label, output_file:str):
     """ """
 
     # load data
