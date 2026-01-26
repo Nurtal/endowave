@@ -38,3 +38,4 @@ Simple and accessible project to plays with frequency in rnaseq
 - 2025-11-24 : J'ai lancé une premiere run complete hier avec total energy + xgboosted tree, les resultats sont plutot encourageant, faut que je regarde si changer l'ordre des genes impact les scores de classifications
 - 2026-01-20 : Reprise du sujet et ambition de le soumettre à une conf cette année, je pense qu'il faut faire nos armes sur TCGA, le dataset de cancero qui fait reference en matiere de prediction d'endotypes
 - 2026-01-22 : Ajout de la donction dl dataset de TCGA-BRCA, d'après chatgpt je devrais me concentrer sur les données TPM avec normalisation log2 (TPM + log2(TPM + 1)) pour faire de l'analyse spectrale, surement un sujet à creuser d'avantage
+- 2026-01-26 : ChatGPT me maintient que log2(TPM+1) c'est plus spectral friendly que VST

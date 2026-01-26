@@ -53,10 +53,29 @@ def add_label(data_file, manifest, label, output_file):
     df.to_csv(output_file, index=False)
     
 
+def craft_log_normalize_data(tpm_data_file:str, output_file:str):
+    """Cleaning & supposed to be more spectral analysis friendly"""
+
+    # load data
+    df = pd.read_csv(tpm_data_file)
+
+    # log2 transformation
+    X = np.log2(df + 1)
+
+    # centrage
+    X = X.sub(X.mean(axis=1), axis=0)
+
+    # save
+    X.to_csv(output_file, index=False)
+
+
+
+     
 
 
 if __name__ == "__main__":
     
     
     # craft_psd_total_energy_data("data/GSE83687/signals", "data/GSE83687/totalenergy.csv")
-    add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
+    # add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
+    craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "/tmp/lognorm.csv")
