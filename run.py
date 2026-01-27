@@ -115,7 +115,36 @@ def run_immune(output_dir):
     print("Cross-val :", results["cv_scores_macro"])
     print("Moyenne CV :", results["cv_mean_macro"])
 
+
+
+
+def run_tcga_pheno(output_dir):
+    """ """
+
+    # init output dir [ok]
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+        os.mkdir(f"{output_dir}/data")
+        os.mkdir(f"{output_dir}/signals")
+        os.mkdir(f"{output_dir}/modules")
+
+    # download data [ok]
+    # download_data.download_tcga_data(f"{output_dir}/data")
+
+    # normalize data [ok]
+    # craft_data.craft_log_normalize_data(f"{output_dir}/data/TCGA_BRCA_tpm.csv", f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv")
+
+    # split into module
+    split_into_modules.split_vst_into_hallmark_module(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv", f"{output_dir}/modules/MSigDB_Hallmark")
+
+
+
+
+
+
 if __name__ == "__main__":
 
-    run_immune("data/explore/immue_wave")
+    # run_immune("data/explore/immue_wave")
+
+    run_tcga_pheno("data/test_tcga")
     

@@ -58,6 +58,7 @@ def craft_log_normalize_data(tpm_data_file:str, output_file:str):
 
     # load data
     df = pd.read_csv(tpm_data_file)
+    df = df.set_index("Ensembl_ID")
 
     # log2 transformation
     X = np.log2(df + 1)
@@ -66,16 +67,39 @@ def craft_log_normalize_data(tpm_data_file:str, output_file:str):
     X = X.sub(X.mean(axis=1), axis=0)
 
     # save
-    X.to_csv(output_file, index=False)
+    X.to_csv(output_file)
 
 
-def craft_tcga_her():
+def craft_tcga_phenotype_dataset():
     """ """
 
-    df = pd.read_csv("data/TCGA/TCGA_BRCA_phenotype.csv")
-    print(df)
+    # target label list
+    target_list = [
+        "sample",
+        "disease_type",
+        "race.demographic",
+        "gender.demographic",
+        "vital_status.demographic",
+        "code.tissue_source_site",
+        "name.tissue_source_site",
+        "synchronous_malignancy.diagnoses",
+        "ajcc_pathologic_stage.diagnoses",
+        "primary_diagnosis.diagnoses",
+        "prior_malignancy.diagnoses",
+        "prior_treatment.diagnoses",
+        "ajcc_pathologic_t.diagnoses",
+        "ajcc_pathologic_n.diagnoses",
+        "ajcc_pathologic_m.diagnoses",
+        "icd_10_code.diagnoses",
+        "tumor_descriptor.samples",
+        "sample_type.samples",
+        "specimen_type.samples",
+        "tissue_type.samples"
+    ]
 
-     
+    # load manifest
+    df = pd.read_csv("data/TCGA/TCGA_BRCA_phenotype.csv")
+    df = df[target_list]
 
 
 if __name__ == "__main__":
@@ -83,5 +107,5 @@ if __name__ == "__main__":
     
     # craft_psd_total_energy_data("data/GSE83687/signals", "data/GSE83687/totalenergy.csv")
     # add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
-    craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "data/TCGA/TCGA_BRCA_tpm_lognorm.csv")
-    craft_tcga_her()
+    # craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "data/TCGA/TCGA_BRCA_tpm_lognorm.csv")
+    craft_tcga_phenotype_dataset()
