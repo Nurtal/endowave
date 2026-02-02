@@ -134,12 +134,33 @@ def run_tcga_pheno(output_dir):
     # normalize data [ok]
     craft_data.craft_log_normalize_data(f"{output_dir}/data/TCGA_BRCA_tpm.csv", f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv")
 
-    # clean data
+    # clean data [ok]
     preprocess_data.reformat_tcga(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv",f"{output_dir}/data/TCGA_BRCA_tpm_lognorm_clean.csv" )
 
-    # split into module
+    # split into module [ok]
     split_into_modules.split_vst_into_hallmark_module(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm_clean.csv", f"{output_dir}/modules/MSigDB_Hallmark")
 
+    # turn into signals
+    for module in glob.glob(f"{output_dir}/modules/MSigDB_Hallmark/*.csv"):
+        module_name = module.split("/")[-1].replace('.csv', '')
+
+        if not os.path.isdir(f"{output_dir}/signals/{module_name}"):
+            os.mkdir(f"{output_dir}/signals/{module_name}")
+
+        config = compute_gene_order.build_random_order(module)
+        craft_signal.write_freq(module, config['order'], config['positions'], f"{output_dir}/signals/{module_name}")
+
+        for signal_file in glob.glob(f"{output_dir}/signals/{module_name}/*.csv"): 
+
+            # compute FFT
+            freqs, amplitude = compute_fft.compute_fft(signal_file)
+            df_fft = pd.DataFrame({"x":freqs, "y":amplitude})
+            df_fft.to_csv(signal_file.replace(".csv", "_fft.csv"), index=False)
+
+            # compute PSD
+            freqs, psd = compute_psd.compute_welch(signal_file) 
+            df_psd = pd.DataFrame({"x":freqs, "y":psd})
+            df_psd.to_csv(signal_file.replace(".csv", "_psd.csv"), index=False)
 
 
 
