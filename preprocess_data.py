@@ -113,15 +113,12 @@ def reformat_tcga(data_file, output_file):
     df.index = df['ID']
     df = df.drop(columns=['ID'])
     df = df.T
-    print(df)
   
     # Reorder cols
     df['ID'] = df.index
-    last_col = df.columns[-1]
-    df = df[[last_col] + df.columns[:-1].tolist()]
+    df.insert(0, "ID", df.pop("ID")) # memory efficient
 
     # save
-    print(df)
     df.to_csv(output_file, index=False)
 
 

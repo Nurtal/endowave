@@ -129,13 +129,16 @@ def run_tcga_pheno(output_dir):
         os.mkdir(f"{output_dir}/modules")
 
     # download data [ok]
-    # download_data.download_tcga_data(f"{output_dir}/data")
+    download_data.download_tcga_data(f"{output_dir}/data")
 
     # normalize data [ok]
-    # craft_data.craft_log_normalize_data(f"{output_dir}/data/TCGA_BRCA_tpm.csv", f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv")
+    craft_data.craft_log_normalize_data(f"{output_dir}/data/TCGA_BRCA_tpm.csv", f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv")
+
+    # clean data
+    preprocess_data.reformat_tcga(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv",f"{output_dir}/data/TCGA_BRCA_tpm_lognorm_clean.csv" )
 
     # split into module
-    split_into_modules.split_vst_into_hallmark_module(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm.csv", f"{output_dir}/modules/MSigDB_Hallmark")
+    split_into_modules.split_vst_into_hallmark_module(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm_clean.csv", f"{output_dir}/modules/MSigDB_Hallmark")
 
 
 
