@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
+import glob
 
 def train_xgboost_multiclass(csv_path, test_size=0.2, n_splits=5, random_state=42):
     """
@@ -78,12 +79,62 @@ def train_xgboost_multiclass(csv_path, test_size=0.2, n_splits=5, random_state=4
     }
 
 
+def run_tcga_pheno(output_folder):
+    """ """
+
+    # params
+    test_size = 0.3
+    data = []
+
+    for pathway_file in glob.glob(f"{output_folder}/data/phenotype/*.csv"):
+
+        # extract pathway
+        pathway = pathway_file.split("/")[-1].replace(".csv", "").replace("total_energy_", "")
+
+        # load df
+        df = pd.read_csv(pathway_file)
+
+        # check nb of distinct label & generate data for clf
+        label_list = list(set(list(df['LABEL'])))
+        label_to_keep = []
+        for label in label_list:
+            count = df[df['LABEL']==label].shape[0]
+            if count > 15:
+                label_to_keep.append(label)
+        df = df[df['LABEL'].isin(label_to_keep)]
+        df.to_csv(f"{pathway_file.replace('.csv', '_for_clf.csv')}", index=False)
+
+        # run clf
+        if len(label_to_keep) > 1:
+            results = train_xgboost_multiclass(f"{pathway_file.replace('.csv', '_for_clf.csv')}", test_size=test_size)
+            vector = {
+                'TARGET':label,
+                "F1 macro (test)":results["f1_test_macro"],
+                "Cross-val":results["cv_scores_macro"],
+                "Moyenne CV":results["cv_mean_macro"],
+                'CLF':"XGB",
+                'Nb_class':len(label_to_keep),
+                'PATHWAY':pathway
+            }
+
+            data.append(vector)
+
+    # save results
+    df_results = pd.DataFrame(data)
+    df_to_csv(f"{output_folder}/clf/total_energy_phenotype_xgboost.csv", index=False)
+
+        
+
+
+
 
 if __name__ == "__main__":
 
-    results = train_xgboost_multiclass("data/GSE83687/totalenergy_labeled.csv", test_size=0.3)
-    print("F1 macro (test) :", results["f1_test_macro"])
-    print("Cross-val :", results["cv_scores_macro"])
-    print("Moyenne CV :", results["cv_mean_macro"])
+    # results = train_xgboost_multiclass("data/GSE83687/totalenergy_labeled.csv", test_size=0.3)
+    # print("F1 macro (test) :", results["f1_test_macro"])
+    # print("Cross-val :", results["cv_scores_macro"])
+    # print("Moyenne CV :", results["cv_mean_macro"])
+
+    run_tcga_pheno("data/test_tcga")
 
     

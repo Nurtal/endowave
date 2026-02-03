@@ -140,7 +140,7 @@ def run_tcga_pheno(output_dir):
     # split into module [ok]
     split_into_modules.split_vst_into_hallmark_module(f"{output_dir}/data/TCGA_BRCA_tpm_lognorm_clean.csv", f"{output_dir}/modules/MSigDB_Hallmark")
 
-    # turn into signals
+    # turn into signals [ok]
     for module in glob.glob(f"{output_dir}/modules/MSigDB_Hallmark/*.csv"):
         module_name = module.split("/")[-1].replace('.csv', '')
 
@@ -152,17 +152,21 @@ def run_tcga_pheno(output_dir):
 
         for signal_file in glob.glob(f"{output_dir}/signals/{module_name}/*.csv"): 
 
-            # compute FFT
+            # compute FFT [ok]
             freqs, amplitude = compute_fft.compute_fft(signal_file)
             df_fft = pd.DataFrame({"x":freqs, "y":amplitude})
             df_fft.to_csv(signal_file.replace(".csv", "_fft.csv"), index=False)
 
-            # compute PSD
+            # compute PSD [ok]
             freqs, psd = compute_psd.compute_welch(signal_file) 
             df_psd = pd.DataFrame({"x":freqs, "y":psd})
             df_psd.to_csv(signal_file.replace(".csv", "_psd.csv"), index=False)
 
+    # craft data
+    craft_data.craft_tcga_phenotype_dataset(output_dir)
 
+    # run clf
+    run_tcga_pheno(output_dir)
 
 
 

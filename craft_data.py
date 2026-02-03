@@ -70,7 +70,7 @@ def craft_log_normalize_data(tpm_data_file:str, output_file:str):
     X.to_csv(output_file)
 
 
-def craft_tcga_phenotype_dataset():
+def craft_tcga_phenotype_dataset(output_folder):
     """ """
 
     # target label list
@@ -101,6 +101,29 @@ def craft_tcga_phenotype_dataset():
     df = pd.read_csv("data/TCGA/TCGA_BRCA_phenotype.csv")
     df = df[target_list]
 
+    # compute PSD total energy
+    craft_psd_total_energy_data(f"{output_folder}/signals", f"{output_folder}/data/total_energy.csv")
+
+    # init folder
+    if not os.path.isdir(f"{output_folder}/data/phenotype"):
+        os.mkdir(f"{output_folder}/data/phenotype")
+
+    # reload data
+    df_data = pd.read_csv(f"{output_folder}/data/total_energy.csv")
+    for target in target_list[1:-1]:
+
+        df_label = df[['sample', target]]
+        df_pheno = df_data
+
+        id_to_label = {}
+        for index, row in df_label.iterrows():
+            i = row['sample']
+            label = row[target]
+            id_to_label[i] = label
+        df_pheno['LABEL'] = df_pheno['ID'].replace(id_to_label)
+
+        # save
+        df_pheno.to_csv(f"{output_folder}/data/phenotype/total_energy_{target.replace('.', '_')}.csv", index=False)
 
 if __name__ == "__main__":
     
@@ -108,4 +131,4 @@ if __name__ == "__main__":
     # craft_psd_total_energy_data("data/GSE83687/signals", "data/GSE83687/totalenergy.csv")
     # add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
     # craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "data/TCGA/TCGA_BRCA_tpm_lognorm.csv")
-    craft_tcga_phenotype_dataset()
+    craft_tcga_phenotype_dataset("data/test_tcga")
