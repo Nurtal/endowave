@@ -3,6 +3,7 @@ import glob
 import os
 import compute_psd
 import numpy as np
+import random
 
 def craft_psd_total_energy_data(signal_folder:str, output_file:str):
     """ """
@@ -125,10 +126,107 @@ def craft_tcga_phenotype_dataset(output_folder):
         # save
         df_pheno.to_csv(f"{output_folder}/data/phenotype/total_energy_{target.replace('.', '_')}.csv", index=False)
 
+
+
+
+
+def craft_toy_dataset(nb_patient:int, nb_gene:int, frequence:int, result_file:str) -> None:
+    """Craft a toy dataset to test frequency analysis
+    
+    * The dataset is composed of nb_patient discribed by nb_gene and a label randomly assignated between 'A' and 'B'.
+    
+    * Patients in group A have age expression based on a frequency signal, patient in group B have genes with random values assign.
+
+    * All genes expression are between 0 and 10
+
+    * Columns order is shuffled to hide the signal before saving to csv
+
+    Args:
+        - nb_patient (int) : nb patient in dataset
+        - nb_gene (int) : nb gene in dataset
+        - frequence (int) : frequence associate to signal in the group A (60 is not a bad pick)
+        - result_file (str) : name of the csv file, saved in data/toy subdirectory
+
+    """
+
+    # param
+    label_list = ['A', 'B']
+
+    # init output folder
+    if not os.path.isdir("data/toy"):
+        os.mkdir("data/toy")
+
+    # forge data
+    cohort = []
+    for x in range(nb_patient):
+
+        # pick a labek
+        label = label_list[random.randint(0,1)]
+
+        # create signal pour groupe A
+        if label == 'A':
+
+            # 'time'
+            t = np.linspace(0, 2*np.pi*frequence, nb_gene)
+    
+            # amplitude tirée sur un intervalle large
+            A = np.random.uniform(1, 5)   # forte variabilité
+    
+            # petit bruit pour casser la symétrie parfaite
+            noise = np.random.normal(0, 0.3, nb_gene)
+    
+            offset = 5
+    
+            signal = offset + A * np.sin(t) + noise
+    
+            # garantir valeurs entre 0 et 10
+            vector = np.clip(signal, 0, 10)
+
+
+        else:
+            vector = [random.uniform(0, 10) for _ in range(nb_gene)]
+
+        # forge vector
+        data = {}
+        for i in range(nb_gene):
+            data[f"G{i}"] = float(vector[i])
+        data['LABEL'] = label
+
+        # update cohort
+        cohort.append(data)
+
+    # craft dataset
+    df = pd.DataFrame(cohort)
+
+    # shuffle columns order
+    cols = df.columns.tolist()
+    last_col = cols[-1]
+    other_cols = cols[:-1]
+    np.random.shuffle(other_cols)
+    new_order = other_cols + [last_col]
+    df = df[new_order]
+
+    # save dataset
+    df.to_csv(f"data/toy/{result_file}")
+        
+
+        
+    
+
+    
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     
     
     # craft_psd_total_energy_data("data/GSE83687/signals", "data/GSE83687/totalenergy.csv")
     # add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
     # craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "data/TCGA/TCGA_BRCA_tpm_lognorm.csv")
-    craft_tcga_phenotype_dataset("data/test_tcga")
+    # craft_tcga_phenotype_dataset("data/test_tcga")
+    craft_toy_dataset(20, 10, 60, "test.csv")
