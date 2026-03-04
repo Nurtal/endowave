@@ -43,7 +43,7 @@ def scattering_transform_dataframe(data_file, result_file, J=3, Q=8):
     scat_df["LABEL"] = labels
 
     # save dataframe
-    df.to_csv(result_file, index=False)
+    scat_df.to_csv(result_file, index=False)
 
 
 

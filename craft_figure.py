@@ -65,4 +65,5 @@ def generate_umap(data_file:str, figure_file:str) -> None:
 if __name__ == "__main__":
 
     generate_umap("data/toy/test.csv", "test.png")
+    generate_umap("data/toy/test_scat.csv", "test_scat.png")
     
