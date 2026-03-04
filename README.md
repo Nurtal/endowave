@@ -39,3 +39,4 @@ Simple and accessible project to plays with frequency in rnaseq
 - 2026-01-20 : Reprise du sujet et ambition de le soumettre à une conf cette année, je pense qu'il faut faire nos armes sur TCGA, le dataset de cancero qui fait reference en matiere de prediction d'endotypes
 - 2026-01-22 : Ajout de la donction dl dataset de TCGA-BRCA, d'après chatgpt je devrais me concentrer sur les données TPM avec normalisation log2 (TPM + log2(TPM + 1)) pour faire de l'analyse spectrale, surement un sujet à creuser d'avantage
 - 2026-01-26 : ChatGPT me maintient que log2(TPM+1) c'est plus spectral friendly que VST
+- 2026-03-04 : Reprise du projet avec création d'un jeu de données test qui contient un motif frequentielle, l'idée c'est de voir comment on peut mettre en place une stratégie pour l'extraire sur un 'toy dataset'

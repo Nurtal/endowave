@@ -7,3 +7,4 @@ gseapy
 polars
 xgboost
 scikit-learn
+umap-learn
