@@ -8,3 +8,4 @@ polars
 xgboost
 scikit-learn
 umap-learn
+kymatio
