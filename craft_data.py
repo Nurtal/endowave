@@ -198,6 +198,9 @@ def craft_toy_dataset(nb_patient:int, nb_gene:int, frequence:int, result_file:st
     # craft dataset
     df = pd.DataFrame(cohort)
 
+    # save dataset
+    df.to_csv(f"data/toy/{result_file}", index=False)
+
     # shuffle columns order
     cols = df.columns.tolist()
     last_col = cols[-1]
@@ -206,17 +209,11 @@ def craft_toy_dataset(nb_patient:int, nb_gene:int, frequence:int, result_file:st
     new_order = other_cols + [last_col]
     df = df[new_order]
 
-    # save dataset
-    df.to_csv(f"data/toy/{result_file}")
+    # save shuffled dataset
+    df.to_csv(f"data/toy/{result_file.replace('.csv', '_shuffled.csv')}", index=False)
         
 
         
-    
-
-    
-
-
-
 
 
 
@@ -229,4 +226,4 @@ if __name__ == "__main__":
     # add_label("data/GSE83687/totalenergy.csv", "data/GSE83687/manifest.csv", "clinical condition", "data/GSE83687/totalenergy_labeled.csv")
     # craft_log_normalize_data("data/TCGA/TCGA_BRCA_tpm.csv", "data/TCGA/TCGA_BRCA_tpm_lognorm.csv")
     # craft_tcga_phenotype_dataset("data/test_tcga")
-    craft_toy_dataset(20, 10, 60, "test.csv")
+    craft_toy_dataset(100, 8, 60, "test.csv")
