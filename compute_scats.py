@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from kymatio.numpy import Scattering1D
+import os
 
 def scattering_transform_dataframe(data_file, result_file, J=3, Q=8):
     """
@@ -11,7 +12,10 @@ def scattering_transform_dataframe(data_file, result_file, J=3, Q=8):
     """
 
     # load data
-    df = pd.read_csv(data_file)
+    if isinstance(data_file, pd.DataFrame):
+        df = data_file
+    elif os.path.isfile(data_file):
+        df = pd.read_csv(data_file)
     X = df.iloc[:, :-1].values
     labels = df.iloc[:, -1].values
     n_samples, n_features = X.shape
@@ -44,6 +48,8 @@ def scattering_transform_dataframe(data_file, result_file, J=3, Q=8):
 
     # save dataframe
     scat_df.to_csv(result_file, index=False)
+
+    return scat_df
 
 
 
